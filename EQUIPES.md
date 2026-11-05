@@ -1,6 +1,6 @@
 # Equipes
 
-Lista das equipes, montada a partir dos forks (atualizada em 05/11/2026, 11h). Cada equipe preenche o nome do time e os integrantes no README **do próprio fork**.
+Lista das equipes, montada a partir dos forks (atualizada em 05/11/2026, 13h30). Cada equipe preenche o nome do time e os integrantes no README **do próprio fork**.
 
 | Time | Integrantes (usuário do GitHub) | Fork |
 | --- | --- | --- |
@@ -10,3 +10,4 @@ Lista das equipes, montada a partir dos forks (atualizada em 05/11/2026, 11h). C
 | Caos & Código | Beatriz, Dalton Cauã (daltoncaua11-png), Eduardo Lima, Thaila Brasil, Raniele | [daltoncaua11-png/bd-integracao-dados-engco241m01](https://github.com/daltoncaua11-png/bd-integracao-dados-engco241m01) |
 | a preencher | juniorabc11jm-bit (dono do fork) | [juniorabc11jm-bit/bd-integracao-dados-engco241m01](https://github.com/juniorabc11jm-bit/bd-integracao-dados-engco241m01) |
 | Bubus_trans | Filipe Araújo (Filipe-maxx), Saeelem Nascimento, Vinícius Lima, Pablo Fernandes, Gustavo Cruz | [Filipe-maxx/bd-integracao-dados-engco241m01](https://github.com/Filipe-maxx/bd-integracao-dados-engco241m01) |
+| Equipe Tatu Bola | Luiz Otávio (LuizOtavio174), Victor Botelho, Ludmila Reinaldo, Pedro Jefferson, Fabrício Araújo | [LuizOtavio174/bd-integracao-dados-engco241m01](https://github.com/LuizOtavio174/bd-integracao-dados-engco241m01) |
