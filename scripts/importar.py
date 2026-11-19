@@ -7,7 +7,7 @@ ARQUIVO = "dados/base_teste.xlsx"  #trocar caminho do dataset dos Senhores
 DB = {
     "host": "localhost", #de acordo com o host do SGBD dos Senhores
     "port": 5432,  #porta padrão do PostgreSQL a do MySQL 3006
-    "database": "postgres", #nome da data base do Senhores
+    "database": "projeto_faculdade", #nome da data base do Senhores
     "user": "postgres",   #utilizador dos senhores 
     "password": "1234"   #senha do utilizador
 }
@@ -17,8 +17,31 @@ def excel_para_data(valor):
     try:
         if pd.isna(valor):
             return None
-        return (datetime(1899, 12, 30) + timedelta(days=int(valor))).date()
-    except:
+
+        # Se já for uma data do Pandas
+        if isinstance(valor, pd.Timestamp):
+            return valor.date()
+
+        # Se já for uma data do Python
+        if isinstance(valor, datetime):
+            return valor.date()
+
+        # Se for número serial do Excel
+        if pd.api.types.is_number(valor):
+            return (
+                datetime(1899, 12, 30) +
+                timedelta(days=float(valor))
+            ).date()
+
+        # Se for texto representando uma data
+        data = pd.to_datetime(valor, errors="coerce", dayfirst=True)
+
+        if pd.isna(data):
+            return None
+
+        return data.date()
+
+    except Exception:
         return None
 
 # ── Conecta no banco ───────────────────────────────────────
@@ -59,15 +82,16 @@ print(f"  {len(df)} registros inseridos em fornecedor \n")
 print("Importando produtos_filial...")
 df = pd.read_excel(ARQUIVO, sheet_name="produtos_filial")
 df.columns = df.columns.str.strip()
+inseridos = 0
 
 for _, row in df.iterrows():
     try:
         cur.execute("""
             INSERT INTO public.produtos_filial
-                (filial_id, produto_id, descricao, estoque,
-                 preco_unitario, preco_compra, preco_venda, idfornecedor)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (filial_id, produto_id) DO NOTHING
+    (filial_id, idproduto, descricao, estoque,
+     preco_unitario, preco_compra, preco_venda, idfornecedor)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+ON CONFLICT (filial_id, idproduto) DO NOTHING
         """, (
             int(row["filial_id"]) if pd.notna(row["filial_id"]) else None,
             str(row["idproduto"]).strip(),
@@ -77,14 +101,16 @@ for _, row in df.iterrows():
             float(row["preco_compra"]) if pd.notna(row["preco_compra"]) else 0,
             float(row["preco_venda"]) if pd.notna(row["preco_venda"]) else 0,
             str(row["idfornecedor"]).strip() if pd.notna(row["idfornecedor"]) else None
+            
         ))
+        inseridos += 1
     except Exception as e:
         print(f"  Erro produtos_filial linha {_}: {e}")
         conn.rollback()
         continue
 
 conn.commit()
-print(f"  {len(df)} registros inseridos em produtos_filial \n")
+print(f"  {inseridos} registros inseridos em produtos_filial \n")
 
 
 # 3. PEDIDO_COMPRA
@@ -107,7 +133,16 @@ for _, row in df.iterrows():
                  ordem_compra, qtde_pedida, filial_id, data_entrega,
                  qtde_entregue, qtde_pendente, preco_compra, fornecedor_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (pedido_id, produto_id, item) DO NOTHING
+            ON CONFLICT (pedido_id, produto_id, item)
+DO UPDATE SET
+    data_pedido = COALESCE(
+        pedido_compra.data_pedido,
+        EXCLUDED.data_pedido
+    ),
+    data_entrega = COALESCE(
+        pedido_compra.data_entrega,
+        EXCLUDED.data_entrega
+    )
         """, (
             float(row["pedido_id"]),
             excel_para_data(row["data_pedido"]),
@@ -128,7 +163,7 @@ for _, row in df.iterrows():
     except Exception as e:
         print(f"  Erro pedido_compra linha {_}: {e}")
         conn.rollback()
-        continue
+        raise
 
 conn.commit()
 print(f"  {inseridos} registros inseridos em pedido_compra \n")
@@ -147,7 +182,14 @@ for _, row in df.iterrows():
                 (data_entrada, nro_nfe, item, produto_id, descricao_produto,
                  ordem_compra, qtde_recebida, filial_id, custo_unitario)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (ordem_compra, item, produto_id, nro_nfe) DO NOTHING
+            
+ON CONFLICT (ordem_compra, item, produto_id, nro_nfe)
+DO UPDATE SET
+    data_entrada = COALESCE(
+        entradas_mercadoria.data_entrada,
+        EXCLUDED.data_entrada
+    )
+
         """, (
             excel_para_data(row["data_entrada"]),
             str(row["nro_nfe"]).strip(),
@@ -162,7 +204,7 @@ for _, row in df.iterrows():
     except Exception as e:
         print(f"  Erro entradas_mercadoria linha {_}: {e}")
         conn.rollback()
-        continue
+        raise
 
 conn.commit()
 print(f"  {len(df)} registros inseridos em entradas_mercadoria \n")
