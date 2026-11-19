@@ -6,12 +6,12 @@
 
 ## Equipe
 
-**Nome do time:** ____________________
+**Nome do time:** _______Erro 404_____________
 
 | Nome | Matrícula | Usuário do GitHub |
 | --- | --- | --- |
-|  |  |  |
-|  |  |  |
+| Pedro Almeida | 2546180 |pedroameida054-cmd |
+| Luiz Cabral | 2416748 | luizin1016 |
 |  |  |  |
 |  |  |  |
 |  |  |  |
