@@ -22,9 +22,9 @@
 
 ## Checklist
 
-- [ ] DDL corrigido para PostgreSQL e MySQL
-- [ ] Script de importação corrigido e documentado em `docs/parte1_importacao.md`
+- [x] DDL corrigido para PostgreSQL e MySQL
+- [x] Script de importação corrigido e documentado em `docs/parte1_importacao.md`
 - [ ] Consultas da Parte 2
 - [ ] Transformações e trigger da Parte 3
-- [ ] Roteiro de validação e lista de erros em `docs/parte4_validacao.md`
+- [x] Roteiro de validação e lista de erros em `docs/parte4_validacao.md`
 - [ ] Cada integrante tem pelo menos 3 commits
