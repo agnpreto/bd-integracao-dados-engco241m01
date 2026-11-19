@@ -1,14 +1,14 @@
 ## Equipe
 
-**Nome do time:** 
+**Caos e código** 
 
 | Nome | Matrícula | Usuário do GitHub |
 | --- | --- | --- |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Beatriz Souza | 2422740 | BeatrizKarvalho |
+| Dalton Cauã | 2419749 | daltoncaua11-png! |
+| Eduardo Lima | 2415393 | limaeduardodeoliveira-byte |
+| Thaila Brasil | 2419613 | Brasil Tailândia |
+| Raniele Almeida | 2423948 | rhanny118 |
 
 ## Conferência da importação
 
