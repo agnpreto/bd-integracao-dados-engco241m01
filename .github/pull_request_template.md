@@ -14,11 +14,11 @@
 
 | Tabela | Linhas no banco |
 | --- | --- |
-| fornecedor |  |
-| produtos_filial |  |
-| pedido_compra |  |
-| entradas_mercadoria |  |
-| venda |  |
+| fornecedor | 20 |
+| produtos_filial | 20 |
+| pedido_compra | 29 |
+| entradas_mercadoria | 20 |
+| venda | 33 |
 
 ## Checklist
 
