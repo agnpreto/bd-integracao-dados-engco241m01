@@ -2,8 +2,8 @@
 
 ## Ferramenta utilizada
 
-- **Importação:** script Python `scripts/importar.py` (Python 3, `pandas` + `openpyxl` para ler a planilha, `psycopg2` para gravar). É o script do estagiário, corrigido; as falhas dele estão na seção própria abaixo.
-- **Bancos:** PostgreSQL 16 (carga completa e conferida) e MySQL 8.0 (o DDL corrigido foi executado e a trigger testada; a carga de dados foi feita só no PostgreSQL, porque o script usa `psycopg2`).
+- **Importação:** script Python `scripts/importar.py` (Python , `pandas` + `openpyxl` para ler a planilha, `psycopg2` para gravar). É o script do estagiário, corrigido; as falhas dele estão na seção própria abaixo.
+- **Bancos:** PostgreSQL (carga completa e conferida) e MySQL (o DDL corrigido foi executado e a trigger testada; a carga de dados foi feita só no PostgreSQL, porque o script usa `psycopg2`).
 - **Como rodar:**
   ```bash
   pip install -r requirements.txt
