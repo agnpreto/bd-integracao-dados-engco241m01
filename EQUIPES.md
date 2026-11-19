@@ -1,6 +1,6 @@
 # Equipes
 
-Lista das equipes, montada a partir dos forks (atualizada em 18/11/2026, 07h40). Cada equipe preenche o nome do time e os integrantes no README **do próprio fork**.
+Lista das equipes, montada a partir dos forks (atualizada em 18/11/2026, 17h40). Cada equipe preenche o nome do time e os integrantes no README **do próprio fork**.
 
 | Time | Integrantes (usuário do GitHub) | Fork |
 | --- | --- | --- |
@@ -11,3 +11,5 @@ Lista das equipes, montada a partir dos forks (atualizada em 18/11/2026, 07h40).
 | Bebeto & Romario | Francisco Monteiro (juniorabc11jm-bit, 2263851), Rágramo Alves (alvesragramo-stack, 2400901) | [juniorabc11jm-bit/bd-integracao-dados-engco241m01](https://github.com/juniorabc11jm-bit/bd-integracao-dados-engco241m01) |
 | Bubus_trans | Filipe Araújo (Filipe-maxx), Saeelem Nascimento, Vinícius Lima, Pablo Fernandes, Gustavo Cruz | [Filipe-maxx/bd-integracao-dados-engco241m01](https://github.com/Filipe-maxx/bd-integracao-dados-engco241m01) |
 | Equipe Tatu Bola | Luiz Otávio (LuizOtavio174), Victor Botelho, Ludmila Reinaldo, Pedro Jefferson, Fabrício Araújo | [LuizOtavio174/bd-integracao-dados-engco241m01](https://github.com/LuizOtavio174/bd-integracao-dados-engco241m01) |
+| a preencher | pantojagustavo63-coder (dono do fork; README ainda sem time e integrantes) | [pantojagustavo63-coder/bd-integracao-dados-engco241m01](https://github.com/pantojagustavo63-coder/bd-integracao-dados-engco241m01) |
+| a preencher | pedroameida054-cmd (dono do fork; README ainda sem time e integrantes) | [pedroameida054-cmd/bd-integracao-dados-engco241m01](https://github.com/pedroameida054-cmd/bd-integracao-dados-engco241m01) |
