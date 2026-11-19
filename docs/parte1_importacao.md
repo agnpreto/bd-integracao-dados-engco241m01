@@ -4,13 +4,6 @@
 
 - **Importação:** script Python `scripts/importar.py` (Python , `pandas` + `openpyxl` para ler a planilha, `psycopg2` para gravar). É o script do estagiário, corrigido; as falhas dele estão na seção própria abaixo.
 - **Bancos:** PostgreSQL (carga completa e conferida) e MySQL (o DDL corrigido foi executado e a trigger testada; a carga de dados foi feita só no PostgreSQL, porque o script usa `psycopg2`).
-- **Como rodar:**
-  ```bash
-  pip install -r requirements.txt
-  psql -U postgres -d postgres -f sql/01_ddl_postgres.sql      # cria as tabelas
-  export PGPASSWORD='sua_senha'                                # senha só por variável de ambiente
-  python scripts/importar.py                                   # PGHOST/PGPORT/PGDATABASE/PGUSER opcionais
-  ```
 - O script é idempotente (rodar duas vezes não duplica; testado) e termina com código de saída diferente de zero se alguma linha for rejeitada ou se as contagens não baterem.
 - A planilha `dados/base_teste.xlsx` não foi alterada.
 
