@@ -1,28 +1,16 @@
 import os
-import re
-import sys
-from datetime import date, datetime, time, timedelta
-from decimal import Decimal
-from pathlib import Path
-
+import datetime as dt
 import pandas as pd
 import psycopg2
 
-RAIZ = Path(__file__).resolve().parent.parent
-ARQUIVO = os.environ.get("ARQUIVO_XLSX", str(RAIZ / "dados" / "base_teste.xlsx"))
-
-
-def conectar():
-    if "PGPASSWORD" not in os.environ:
-        sys.exit("Faltou definir PGPASSWORD (e se precisar: PGHOST/PGPORT/PGDATABASE/PGUSER).")
-    return psycopg2.connect(
-        host=os.environ.get("PGHOST", "localhost"),
-        port=int(os.environ.get("PGPORT", "5432")),
-        dbname=os.environ.get("PGDATABASE", "postgres"),
-        user=os.environ.get("PGUSER", "postgres"),
-        password=os.environ["PGPASSWORD"],
-    )
-
+ARQUIVO = C:\Users\Windows10\Downloads ("EXCEL_PATH", "dados/base_teste.xlsx")
+DB = {
+    "host": os.getenv("DB_HOST", "localhost"),
+    "port": int(os.getenv("DB_PORT", 5432)),
+    "database": os.getenv("DB_NAME", "postgres"),
+    "user": os.getenv("DB_USER", "postgres"),
+    "password": os.getenv("DB_PASSWORD", "1234"),
+}
 
 # --funcoes de conversao --
 
