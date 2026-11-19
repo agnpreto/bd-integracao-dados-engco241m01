@@ -12,7 +12,7 @@ Caos & Código
 |  ---  |  ---  |  ---  |
 | Beatriz Souza | 2422740 | BeatrizKarvalho |
 | Dalton Cauã | 2419749 | daltoncaua11-png! |
-| Eduardo Lima |  |  |
+| Eduardo Lima | 2415393 | limaeduardodeoliveira-byte |
 | Thaila Brasil | 2419613 | Brasil Tailândia |
 | Raniele Almeida | 2423948 | rhanny118 | 
 
