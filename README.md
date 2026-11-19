@@ -9,11 +9,12 @@
 Caos & Código 
 
 | Nome | Matrícula | Usuário do GitHub |
-Beatriz 
-Dalton Cauã 
-Eduardo Lima
-Thaila Brasil 
-Raniele
+|  ---  |  ---  |  ---  |
+| Beatriz Souza | 2422740 | BeatrizKarvalho |
+| Dalton Cauã | 2419749 | daltoncaua11-png! |
+| Eduardo Lima |  |  |
+| Thaila Brasil | 2419613 | Brasil Tailândia |
+| Raniele Almeida | 2423948 | rhanny118 | 
 
 ## O cenário
 
