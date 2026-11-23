@@ -1,22 +1,10 @@
--- =====================================================================
--- 04_validacao_mysql_raniele.sql : Parte 4 (consultas prontas para a reunião de validação - MySQL 8)
+-- 04_validacao_mysql_raniele.sql : Parte 4 ( MySQL 8)
 -- Autora: Raniele Almeida | Matrícula: 2423948 | GitHub: @rhanny118
 -- Foco: dados de FEVEREIRO/2025. Banco: PostgreSQL (MySQL 8: trocar TO_CHAR
 
--- por DATE_FORMAT(col, '%d/%m/%Y') e os "DATE '..'" continuam válidos).
--- Roteiro e explicação de cada consulta: docs/parte4_validacao.md
---
--- Organização:
---   Seção A  - Conferência numérica de fevereiro (totais que o cliente compara
---              com o ERP/PDV dele)
---   Seção B  - Uma consulta por erro encontrado nos dados (DADOS-01 a DADOS-18)
---   Seção C  - Painel: todas as verificações numa tela só (encontrado x esperado)
--- =====================================================================
+-- tentando explicar cada consulta: docs/parte4_validacao.md
 
-
--- #####################################################################
 -- SEÇÃO A - CONFERÊNCIA NUMÉRICA DE FEVEREIRO/2025
--- #####################################################################
 
 -- A1. Resumo das vendas de fevereiro (o cliente confere com o fechamento dele)
 -- Esperado: 14 linhas | 14 produtos | 2 filiais | qtde 173,22 | R$ 14.093,17
@@ -31,7 +19,7 @@ SELECT COUNT(*)                                       AS linhas_venda,
 FROM venda
 WHERE data_emissao >= DATE '2025-02-01' AND data_emissao < DATE '2025-03-01';
 
--- A2. Vendas de fevereiro por dia (para bater com o fechamento diário)
+-- A2. Vendas de fevereiro por dia.
 SELECT data_emissao,
        COUNT(*)                                       AS linhas,
        SUM(qtde_vendida)                              AS qtde,
@@ -41,7 +29,7 @@ WHERE data_emissao >= DATE '2025-02-01' AND data_emissao < DATE '2025-03-01'
 GROUP BY data_emissao
 ORDER BY data_emissao;
 
--- A3. Vendas de fevereiro por filial (filial 3 não aparece em fevereiro; a 2 aparece sem cadastro)
+-- A3. Vendas de fevereiro por filial (obs; "filial 3 não aparece em fevereiro; a 2 aparece sem cadastro")
 SELECT filial_id,
        COUNT(*)                                       AS linhas,
        ROUND(SUM(qtde_vendida * valor_unitario), 2)   AS valor_rs
@@ -58,7 +46,7 @@ UNION ALL SELECT 'pedido_compra',       COUNT(*), 29 FROM pedido_compra
 UNION ALL SELECT 'entradas_mercadoria', COUNT(*), 20 FROM entradas_mercadoria
 UNION ALL SELECT 'venda',               COUNT(*), 33 FROM venda;
 
--- A5. Entradas de mercadoria de fevereiro (quantidade e custo)
+-- A5. Entradas de mercadoria de fevereiro (quantidade e custo pra não errar)
 SELECT COUNT(*)                                       AS notas,
        SUM(qtde_recebida)                             AS qtde_recebida,
        ROUND(SUM(qtde_recebida * custo_unitario), 2)  AS custo_total_rs
@@ -72,7 +60,7 @@ SELECT COUNT(*)                                       AS linhas_pedido,
 FROM pedido_compra
 WHERE data_pedido >= DATE '2025-02-01' AND data_pedido < DATE '2025-03-01';
 
--- A7. Identificadores de venda repetidos (esperado: 0 linhas)
+-- A7. Identificadores de venda repetidos
 SELECT venda_id, COUNT(*) AS ocorrencias
 FROM venda
 GROUP BY venda_id
@@ -90,22 +78,16 @@ FROM venda v
 WHERE v.data_emissao >= DATE '2025-02-01' AND v.data_emissao < DATE '2025-03-01'
 ORDER BY v.data_emissao, v.venda_id;
 
-
--- #####################################################################
 -- SEÇÃO B - UMA CONSULTA POR ERRO ENCONTRADO NOS DADOS
 -- (cada consulta devolve as linhas com problema; "Esperado" = quantidade
---  de linhas que ela retorna com a base do cliente)
--- #####################################################################
 
 -- DADOS-01 [venda] Produto vendido sem cadastro em produtos_filial (P21..P28)
--- Esperado: 13 linha(s)
 SELECT v.venda_id, v.data_emissao, v.filial_id, v.produto_id, v.qtde_vendida, v.valor_unitario
 FROM venda v
 WHERE NOT EXISTS (SELECT 1 FROM produtos_filial p WHERE p.produto_id = v.produto_id)
 ORDER BY v.venda_id;
 
 -- DADOS-02 [venda] Venda em filial inexistente no cadastro (filiais 2 e 3)
--- Esperado: 4 linha(s)
 SELECT v.venda_id, v.data_emissao, v.filial_id, v.produto_id
 FROM venda v
 WHERE NOT EXISTS (SELECT 1 FROM produtos_filial p WHERE p.filial_id = v.filial_id)
@@ -119,7 +101,6 @@ WHERE unidade_medida = 'UN' AND qtde_vendida <> ROUND(qtde_vendida, 0)
 ORDER BY venda_id;
 
 -- DADOS-04 [venda] valor_unitario da venda diferente de preco_venda do cadastro (todas as comparáveis)
--- Esperado: 20 linha(s)
 SELECT v.venda_id, v.produto_id, v.valor_unitario AS preco_na_venda, p.preco_venda AS preco_no_cadastro
 FROM venda v
 JOIN produtos_filial p ON p.filial_id = v.filial_id AND p.produto_id = v.produto_id
@@ -127,7 +108,6 @@ WHERE v.valor_unitario <> p.preco_venda
 ORDER BY v.venda_id;
 
 -- DADOS-05 [venda] Mesmo valor_unitario em produtos diferentes (vendas 21 a 33 parecem cópias de P13..P20)
--- Esperado: 8 linha(s)
 SELECT valor_unitario, COUNT(DISTINCT produto_id) AS produtos, COUNT(*) AS linhas,
        MIN(produto_id) AS primeiro_produto, MAX(produto_id) AS ultimo_produto
 FROM venda
@@ -136,7 +116,6 @@ HAVING COUNT(DISTINCT produto_id) > 1
 ORDER BY valor_unitario;
 
 -- DADOS-06 [venda] horariomov idêntico (08:00:00) em 100% das vendas: parece valor padrão, não hora real
--- Esperado: 1 linha(s)
 SELECT horariomov, COUNT(*) AS linhas
 FROM venda
 GROUP BY horariomov
@@ -144,21 +123,18 @@ HAVING COUNT(*) = (SELECT COUNT(*) FROM venda)
 ORDER BY horariomov;
 
 -- DADOS-07 [pedido_compra] ordem_compra = 0 (pedido sem vínculo com entrada)
--- Esperado: 11 linha(s)
 SELECT pedido_id, produto_id, qtde_pedida, data_pedido, ordem_compra
 FROM pedido_compra
 WHERE ordem_compra = 0
 ORDER BY pedido_id;
 
 -- DADOS-08 [pedido_compra] data_entrega anterior à data_pedido
--- Esperado: 20 linha(s)
 SELECT pedido_id, produto_id, data_pedido, data_entrega
 FROM pedido_compra
 WHERE data_entrega < data_pedido
 ORDER BY pedido_id;
 
 -- DADOS-09 [pedido_compra] Mesmo produto em dois pedidos (P12..P20 nos pedidos 12-20 e 21-29)
--- Esperado: 9 linha(s)
 SELECT produto_id, COUNT(*) AS pedidos, SUM(qtde_pedida) AS qtde_total,
        MIN(pedido_id) AS primeiro_pedido, MAX(pedido_id) AS ultimo_pedido
 FROM pedido_compra
@@ -167,7 +143,6 @@ HAVING COUNT(*) > 1
 ORDER BY produto_id;
 
 -- DADOS-10 [pedido_compra] fornecedor_id do pedido diferente do fornecedor do cadastro do produto
--- Esperado: 22 linha(s)
 SELECT pc.pedido_id, pc.produto_id, pc.fornecedor_id AS fornecedor_no_pedido, p.idfornecedor AS fornecedor_no_cadastro
 FROM pedido_compra pc
 JOIN produtos_filial p ON p.filial_id = pc.filial_id AND p.produto_id = pc.produto_id
@@ -175,7 +150,6 @@ WHERE pc.fornecedor_id <> p.idfornecedor
 ORDER BY pc.pedido_id;
 
 -- DADOS-11 [pedido x entrada] qtde_entregue do pedido diferente de qtde_recebida da entrada (mesma ordem_compra)
--- Esperado: 18 linha(s)
 SELECT pc.pedido_id, pc.produto_id, pc.ordem_compra, pc.qtde_entregue, em.qtde_recebida
 FROM pedido_compra pc
 JOIN entradas_mercadoria em ON em.ordem_compra = pc.ordem_compra AND em.produto_id = pc.produto_id
@@ -183,7 +157,6 @@ WHERE pc.qtde_entregue <> em.qtde_recebida
 ORDER BY pc.pedido_id;
 
 -- DADOS-12 [pedido x entrada] preco_compra do pedido diferente de custo_unitario da entrada
--- Esperado: 18 linha(s)
 SELECT pc.pedido_id, pc.produto_id, pc.preco_compra, em.custo_unitario
 FROM pedido_compra pc
 JOIN entradas_mercadoria em ON em.ordem_compra = pc.ordem_compra AND em.produto_id = pc.produto_id
@@ -191,7 +164,6 @@ WHERE pc.preco_compra <> em.custo_unitario
 ORDER BY pc.pedido_id;
 
 -- DADOS-13 [entradas_mercadoria] Entrada cuja ordem_compra não existe em pedido_compra (NFE19, NFE20)
--- Esperado: 2 linha(s)
 SELECT em.nro_nfe, em.ordem_compra, em.produto_id, em.qtde_recebida, em.data_entrada
 FROM entradas_mercadoria em
 WHERE NOT EXISTS (SELECT 1 FROM pedido_compra pc
@@ -199,7 +171,6 @@ WHERE NOT EXISTS (SELECT 1 FROM pedido_compra pc
 ORDER BY em.nro_nfe;
 
 -- DADOS-14 [entradas_mercadoria] qtde_recebida maior que qtde_pedida (recebeu mais do que pediu)
--- Esperado: 7 linha(s)
 SELECT em.nro_nfe, em.produto_id, pc.qtde_pedida, em.qtde_recebida
 FROM entradas_mercadoria em
 JOIN pedido_compra pc ON pc.ordem_compra = em.ordem_compra AND pc.produto_id = em.produto_id
@@ -207,7 +178,6 @@ WHERE em.qtde_recebida > pc.qtde_pedida
 ORDER BY em.nro_nfe;
 
 -- DADOS-15 [entradas_mercadoria] data_entrada anterior à data_pedido (mercadoria chegou antes de ser pedida)
--- Esperado: 9 linha(s)
 SELECT em.nro_nfe, em.produto_id, pc.data_pedido, em.data_entrada
 FROM entradas_mercadoria em
 JOIN pedido_compra pc ON pc.ordem_compra = em.ordem_compra AND pc.produto_id = em.produto_id
@@ -215,33 +185,27 @@ WHERE em.data_entrada < pc.data_pedido
 ORDER BY em.nro_nfe;
 
 -- DADOS-16 [produtos_filial] preco_venda menor que preco_compra (margem negativa: P1, P8, P15, P18)
--- Esperado: 4 linha(s)
 SELECT filial_id, produto_id, preco_compra, preco_venda
 FROM produtos_filial
 WHERE preco_venda < preco_compra
 ORDER BY produto_id;
 
 -- DADOS-17 [produtos_filial] preco_unitario diferente de preco_venda em todos os produtos (significado de preco_unitario indefinido)
--- Esperado: 20 linha(s)
 SELECT filial_id, produto_id, preco_unitario, preco_venda
 FROM produtos_filial
 WHERE preco_unitario <> preco_venda
 ORDER BY produto_id;
 
 -- DADOS-18 [fornecedor] Fornecedor sem nenhum produto vinculado (F14, F15, F16)
--- Esperado: 3 linha(s)
 SELECT f.idfornecedor, f.codigo_origem, f.razao_social
 FROM fornecedor f
 WHERE NOT EXISTS (SELECT 1 FROM produtos_filial p WHERE p.idfornecedor = f.idfornecedor)
 ORDER BY f.idfornecedor;
 
-
--- #####################################################################
--- SEÇÃO C - PAINEL DE VERIFICAÇÕES (rode primeiro na reunião)
+-- SEÇÃO C - PAINEL DE VERIFICAÇÕES
 -- Cada linha repete a consulta da seção B; 'encontrados' deve ser igual a
--- 'esperado' enquanto a base não for corrigida pelo cliente.
--- Quando o cliente corrigir um erro, 'encontrados' cai para 0.
--- #####################################################################
+-- Quando o cliente corrigir um erro, 'encontrados' cai para 0. (0nde filho chora e o pai não ver)
+
 SELECT 'DADOS-01' AS verificacao, 'venda' AS tabela, 'Produto vendido sem cadastro em produtos_filial (P21..P28)' AS problema,
        (SELECT COUNT(*) FROM (
 SELECT v.venda_id, v.data_emissao, v.filial_id, v.produto_id, v.qtde_vendida, v.valor_unitario
