@@ -1,25 +1,7 @@
 #!/usr/bin/env python3
 """
 Importa dados/base_teste.xlsx para PostgreSQL ou MySQL.
-
-Uso (a partir da raiz do repositório):
-    # 1) crie as tabelas:  sql/01_ddl_postgres.sql  (ou sql/01_ddl_mysql.sql)
-    # 2) configure a conexão por variáveis de ambiente (NUNCA escreva a senha aqui):
-    export DB_KIND=postgres          # ou mysql
-    export DB_HOST=localhost
-    export DB_PORT=5432              # MySQL: 3306
-    export DB_NAME=postgres
-    export DB_USER=postgres
-    export DB_PASSWORD='sua_senha_aqui'
-    # 3) rode:
-    python scripts/importar.py            # primeira carga
-    python scripts/importar.py --limpar   # apaga as 5 tabelas e recarrega
-
-Dependências: pandas, openpyxl e psycopg2-binary (PostgreSQL) ou pymysql (MySQL).
-
-O script termina com código 1 se alguma linha for rejeitada ou se a contagem
-do banco não bater com a da planilha. Todas as correções em relação à versão
-do estagiário estão em docs/parte1_importacao.md.
+Autora : Raniele Almeida (2423948)
 """
 import os
 import re
@@ -28,10 +10,10 @@ from datetime import date, datetime, timedelta
 
 import pandas as pd
 
-# ── Configuração (variáveis de ambiente; sem senha real no código) ─────────
+# (variáveis de ambiente; sem senha pra não sofrer no código hehehe)
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ARQUIVO = os.getenv("ARQUIVO_XLSX", os.path.join(RAIZ, "dados", "base_teste.xlsx"))
-DB_KIND = os.getenv("DB_KIND", "postgres").lower()          # postgres | mysql
+DB_KIND = os.getenv("DB_KIND", "postgres").lower()          
 DB = {
     "host": os.getenv("DB_HOST", "localhost"),
     "port": int(os.getenv("DB_PORT", "5432" if DB_KIND == "postgres" else "3306")),
@@ -40,7 +22,7 @@ DB = {
 }
 DB_NAME = os.getenv("DB_NAME", "postgres" if DB_KIND == "postgres" else "bd_integracao")
 
-# Colunas esperadas em cada aba (a ordem é a do INSERT).
+# Colunas esperadas em cada aba (a ordem é a do INSERT...eu vi no YOUTUBE).
 COLUNAS = {
     "fornecedor": ["idfornecedor", "razao_social"],
     "produtos_filial": ["filial_id", "idproduto", "descricao", "estoque",
@@ -55,10 +37,10 @@ COLUNAS = {
               "valor_unitario", "filial_id", "item", "unidade_medida"],
 }
 ORDEM_CARGA = ["fornecedor", "produtos_filial", "pedido_compra",
-               "entradas_mercadoria", "venda"]            # respeita as FKs
+               "entradas_mercadoria", "venda"]            # respeita as FKs pra não da erro na chave estrangeira
 
 
-# ── Conversões estritas: erro vira exceção (nada de "except: return None") ──
+# erro vira exceção (nada de "except: return None")
 def vazio(v):
     return v is None or (not isinstance(v, str) and pd.isna(v)) or \
         (isinstance(v, str) and v.strip() == "")
@@ -101,9 +83,9 @@ def para_data(v, obrigatorio=False):
         return v.date()
     if isinstance(v, date):
         return v
-    if isinstance(v, (int, float)):                       # serial do Excel
+    if isinstance(v, (int, float)):                       
         return (datetime(1899, 12, 30) + timedelta(days=int(v))).date()
-    return pd.to_datetime(str(v), dayfirst=True).date()   # texto 'dd/mm/aaaa'
+    return pd.to_datetime(str(v), dayfirst=True).date()   
 
 
 def id_fornecedor(v):
@@ -114,7 +96,7 @@ def id_fornecedor(v):
     return int(m.group(1))
 
 
-# ── Leitura: cada função devolve (linhas_validas, rejeitadas) ──
+# cada função devolve (linhas_validas, rejeitadas)
 # linhas_validas = [(linha_na_planilha, tupla_de_parametros)]
 def ler_aba(aba):
     df = pd.read_excel(ARQUIVO, sheet_name=aba)
@@ -208,7 +190,7 @@ SQL_INSERT = {
 }
 
 
-# ── Banco ──
+# BC
 def conectar():
     if DB_KIND == "postgres":
         import psycopg2
