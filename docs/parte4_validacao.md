@@ -1,5 +1,5 @@
 -- 04_validacao
--- Nome:Beatriz Souza Da Silva
+-- Nome: Beatriz Souza Da Silva
 # Parte 4: Roteiro de validação com o cliente (fevereiro/2025)
 
 ## 1. Pontos a validar
