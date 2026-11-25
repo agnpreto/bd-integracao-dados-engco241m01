@@ -69,6 +69,5 @@ FROM pedido_compra pc
 JOIN entradas_mercadoria em
   ON em.ordem_compra = pc.ordem_compra AND em.produto_id = pc.produto_id
 WHERE em.qtde_recebida < pc.qtde_pedida
-ORDER BY pc.pedido_id;-- 02_consultas
--- Nome:
+ORDER BY pc.pedido_id;
 
