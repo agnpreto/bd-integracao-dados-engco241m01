@@ -1,5 +1,6 @@
 -- 03_transformacoes_mysql_raniele.sql : Parte 3 (transformações + trigger)
 -- Autora: Raniele Almeida| matrícula:2423948| GitHub: @rhanny118
+-- Ajudade: Dalton Cauã | matricula: 2419749 | github: daltoncaua11-png
 -- obs; pedido_compra descricao_produto vem na própria tabela
 USE integracao;
 SELECT pedido_id,
