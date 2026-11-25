@@ -1,7 +1,8 @@
 -- 02_consultas_mysql_raniele.sql : Parte 2 (consultas básicas)
 -- Autora: Raniele Almeida| Matrícula:2423948| GitHub: @rhanny118
+-- Ajudante: Dalton Cauã | Matricula: 2419749| Github: daltoncaua11-png
 USE integracao;
-SELECT v.produto_id,
+SELECT v.produto_id, 
        COALESCE(p.descricao, '(produto sem cadastro)')        AS descricao,
        SUM(v.qtde_vendida)                                     AS qtde_total,
        ROUND(SUM(v.qtde_vendida * v.valor_unitario), 2)        AS valor_total_rs
