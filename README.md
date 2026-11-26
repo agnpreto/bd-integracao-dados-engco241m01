@@ -6,7 +6,7 @@
 
 ## Equipe
 
-**Nome do time:** T_KAISA SAYURI 
+**Nome do time:** KAISA_SAYURI_RIFT
 
  | Nome | Matrícula | Usuário do GitHub |
 | --- | --- | --- |
