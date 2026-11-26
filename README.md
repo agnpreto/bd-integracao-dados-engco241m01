@@ -6,10 +6,10 @@
 
 ## Equipe
 
-**Nome do time:** ____________________
+**Nome do time:** T_KAISA SAYURI 
 
 | Nome | Matrícula | Usuário do GitHub |
-| --- | --- | --- |
+| YANA SAYURI  | 2407328 | yanataketomi20-dev  |
 |  |  |  |
 |  |  |  |
 |  |  |  |
