@@ -1,5 +1,5 @@
 -- 01_ddl_mysql
--- Nome: [Seu Nome Completo]
+-- Nome: yana sayuri ribeiro taketomi
 
 CREATE DATABASE IF NOT EXISTS integracao_dados;
 USE integracao_dados;
