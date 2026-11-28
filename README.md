@@ -9,7 +9,7 @@
 **Nome do time:** ____________________
 
 | Nome | Matrícula | Usuário do GitHub |
-| --- | --- | --- |
+| wesley felipe | 2423725 | dablioz |
 |  |  |  |
 |  |  |  |
 |  |  |  |
