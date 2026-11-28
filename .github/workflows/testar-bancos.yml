@@ -1,0 +1,120 @@
+name: Testes de integracao PostgreSQL e MySQL
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  postgres:
+    name: PostgreSQL 16
+    runs-on: ubuntu-latest
+    services:
+      banco:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: teste_ci
+          POSTGRES_DB: integracao_dados
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d integracao_dados"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+      - name: Instalar dependencias e cliente do banco
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+          python -m pip install -r scripts/requirements.txt
+      - name: Criar tabelas PostgreSQL
+        env:
+          PGPASSWORD: teste_ci
+        run: psql -h 127.0.0.1 -U postgres -d integracao_dados -v ON_ERROR_STOP=1 -f sql/01_ddl_postgres.sql
+      - name: Importar planilha e conferir contagens PostgreSQL
+        env:
+          DB_ENGINE: postgres
+          DB_HOST: 127.0.0.1
+          DB_PORT: '5432'
+          DB_NAME: integracao_dados
+          DB_USER: postgres
+          DB_PASSWORD: teste_ci
+        run: python scripts/importar.py
+      - name: Testar consultas e instalar trigger PostgreSQL
+        env:
+          PGPASSWORD: teste_ci
+        run: |
+          psql -h 127.0.0.1 -U postgres -d integracao_dados -v ON_ERROR_STOP=1 -f sql/02_consultas.sql
+          psql -h 127.0.0.1 -U postgres -d integracao_dados -v ON_ERROR_STOP=1 -f sql/03_transformacoes.sql
+          psql -h 127.0.0.1 -U postgres -d integracao_dados -v ON_ERROR_STOP=1 -f sql/04_validacao.sql
+      - name: Testar regras, totais e trigger PostgreSQL
+        env:
+          DB_ENGINE: postgres
+          DB_HOST: 127.0.0.1
+          DB_PORT: '5432'
+          DB_NAME: integracao_dados
+          DB_USER: postgres
+          DB_PASSWORD: teste_ci
+        run: python scripts/testes_integracao.py
+
+  mysql:
+    name: MySQL 8.0
+    runs-on: ubuntu-latest
+    services:
+      banco:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: teste_ci
+          MYSQL_DATABASE: integracao_dados
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -uroot -pteste_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+      - name: Instalar dependencias e cliente do banco
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y default-mysql-client
+          python -m pip install -r scripts/requirements.txt
+      - name: Criar tabelas MySQL
+        run: mysql -h 127.0.0.1 -uroot --password=teste_ci integracao_dados < sql/01_ddl_mysql.sql
+      - name: Importar planilha MySQL
+        env:
+          DB_ENGINE: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_NAME: integracao_dados
+          DB_USER: root
+          DB_PASSWORD: teste_ci
+        run: python scripts/importar.py
+      - name: Testar consultas e instalar trigger MySQL
+        run: |
+          mysql -h 127.0.0.1 -uroot --password=teste_ci integracao_dados < sql/02_consultas.sql
+          mysql -h 127.0.0.1 -uroot --password=teste_ci integracao_dados < sql/03_transformacoes_mysql.sql
+          mysql -h 127.0.0.1 -uroot --password=teste_ci integracao_dados < sql/04_validacao.sql
+      - name: Testar regras, totais e trigger MySQL
+        env:
+          DB_ENGINE: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_NAME: integracao_dados
+          DB_USER: root
+          DB_PASSWORD: teste_ci
+        run: python scripts/testes_integracao.py

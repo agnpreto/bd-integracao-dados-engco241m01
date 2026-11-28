@@ -4,17 +4,15 @@
 **Trabalho:** em equipe de até 5 pessoas  
 **Prazo:** 19/11/2026
 
+
 ## Equipe
 
-**Nome do time:** ____________________
+**Nome do time:** SELECT * FROM EU
 
 | Nome | Matrícula | Usuário do GitHub |
 | --- | --- | --- |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Rick Iury Oliveira Andrade | 2417667 | Ricklindo223 |
+
 
 ## O cenário
 
@@ -95,4 +93,29 @@ sql/04_validacao.sql                Parte 4
 
 ⚠️ Não editem o repositório do professor, só o fork da equipe. Um Pull Request por equipe.
 
+## Execucao e evidencias da equipe SELECT * FROM EU
 
+**Integrante:** Rick Iury Oliveira Andrade (2417667, GitHub Ricklindo223).
+
+A solucao foi organizada nos arquivos exigidos pelo enunciado. O DDL original
+`sql/01_ddl_enunciado.sql` e a planilha `dados/base_teste.xlsx` foram preservados.
+
+**Testes automatizados reais:** [GitHub Actions PostgreSQL 16 e MySQL 8.0](https://github.com/Ricklindo223/bd-integracao-dados-engco241m01/actions/runs/44586259937).
+Os dois bancos criaram as tabelas, importaram os 122 registros, executaram
+consultas e validaram a trigger. O total de fevereiro/2025 foi de 14 itens,
+173,22 unidades e R$ 14.093,1704 antes do arredondamento.
+
+### Reproduzir localmente
+
+1. Crie um banco de testes vazio chamado `integracao_dados`.
+2. Execute `sql/01_ddl_postgres.sql` no PostgreSQL, ou `sql/01_ddl_mysql.sql` no MySQL.
+3. Na raiz do repositorio: `python -m pip install -r scripts/requirements.txt`.
+4. Configure no ambiente `DB_ENGINE` (`postgres` ou `mysql`), `DB_NAME=integracao_dados`,
+   `DB_HOST`, `DB_PORT`, `DB_USER` e `DB_PASSWORD` (nao registre senhas no GitHub).
+5. Execute `python scripts/importar.py`.
+6. Execute `sql/02_consultas.sql`, `sql/03_transformacoes.sql` (PostgreSQL)
+   ou `sql/03_transformacoes_mysql.sql` (MySQL) e `sql/04_validacao.sql`.
+7. Depois de instalar a trigger, execute `python scripts/testes_integracao.py`.
+
+Consulte `docs/parte1_importacao.md` e `docs/parte4_validacao.md` para a documentacao,
+inspecao das inconsistencias e limitacoes de negocio.
